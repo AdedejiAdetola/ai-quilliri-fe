@@ -1,113 +1,212 @@
+"use client";
 import Image from "next/image";
+import { useState } from "react";
+import AutoQuestions from "./components/AutoQuestions/AutoQuestions";
+import InputField from "./components/InputField";
+import { Quilliri } from "@/app/api/api";
+
+const inputBank = {
+  card1: {
+    image1: "/image1.svg",
+    text1: "My waist hurts frequently. Do I need a scan?",
+  },
+  card2: {
+    image2: "/image2.svg",
+    text2: "Compare and contrast the two medical images",
+  },
+  card3: {
+    image3: "/image3.svg",
+    text3: "Predict the behaviours of a depressed individual",
+  },
+  card4: {
+    image4: "/image4.svg",
+    text4: "Outline the Disease State Fundamentals for Diabetes",
+  },
+  card5: {
+    image5: "/image5.svg",
+    text5: "What foods should I avoid if I have stomach ulcer?",
+  },
+  card6: {
+    image6: "/image6.svg",
+    text6: "My acne is getting worse. What can I do to fix it?",
+  },
+};
+
+interface Message {
+  text: string;
+  sender: "user" | "bot";
+}
 
 export default function Home() {
+  const [isHovered, setIsHovered] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [inputValue, setInputValue] = useState("");
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
+  const handleNewChat = () => {
+    setMessages([]);
+  };
+
+  const handleSendMessage = async (message: string) => {
+    setMessages((prev) => [...prev, { text: message, sender: "user" }]);
+
+    setTimeout(async () => {
+      const questionR = {
+        context: "",
+        question: message,
+      };
+      try {
+        const response = await Quilliri(questionR);
+        console.log("Sign up successful:", response);
+        setMessages((prev) => [...prev, { text: response, sender: "bot" }]);
+      } catch (error) {
+        console.error("Sign up error:", error);
+      }
+    }, 1000);
+  };
+
+  const { card1, card2, card3, card4, card5, card6 } = inputBank;
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
+    <div className="bg-[url('/circuit-board.svg')] h-screen flex flex-col overflow-hidden">
+      <div className="flex flex-row h-full">
+        <div className="bg-[#0A1C3B] w-[320px] h-full rounded-[15px] m-[15px] mr-0 px-[15px]">
+          <div className="mt-[30px] flex justify-between items-center">
             <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
+              src="/ai-quilliri.svg"
+              alt="AI Quilliri Logo"
+              width={160}
+              height={29.03}
+              priority
+            />
+
+            <Image
+              src="/sidebar-icon.svg"
+              alt="Sidebar Icon"
+              width={24}
               height={24}
               priority
             />
-          </a>
+          </div>
+
+          <div
+            className="h-[50px] border border-[#3266c1] bg-[#0f2e67c8] rounded-[10px] flex items-center justify-between px-[15px] bg-blend-color-dodge cursor-pointer mt-[35px]"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            onClick={handleNewChat}
+          >
+            <p className={`${isHovered ? "text-[#F8F6F0]" : "text-[#929FAD]"}`}>
+              New Chat
+            </p>
+
+            <Image
+              src="/write-icon.svg"
+              alt="New Chat"
+              width={24}
+              height={24}
+              priority
+            />
+          </div>
+        </div>
+
+        <div className="flex-1 flex flex-col justify-between overflow-hidden">
+          <div className="flex-grow overflow-y-auto p-[20px]">
+            {messages.length === 0 ? (
+              <div className="flex items-center justify-center h-full">
+                <div>
+                  <AutoQuestions
+                    text={card1.text1}
+                    image={card1.image1}
+                    extraStyle="flex-row rounded-tr-[5px] ml-[70px]"
+                    pStyle="mr-[10px]"
+                  />
+
+                  <AutoQuestions
+                    text={card2.text2}
+                    image={card2.image2}
+                    extraStyle="flex-row rounded-tr-[5px] mt-[62px] mb-[68px]"
+                    pStyle="mr-[10px]"
+                  />
+
+                  <AutoQuestions
+                    text={card3.text3}
+                    image={card3.image3}
+                    extraStyle="flex-row rounded-tr-[5px] ml-[41px]"
+                    pStyle="mr-[10px]"
+                  />
+                </div>
+
+                <div>
+                  <Image
+                    src="/mid-logo.svg"
+                    alt="Ai Quilliri logo"
+                    width={166.74}
+                    height={200}
+                    priority
+                  />
+                </div>
+
+                <div>
+                  <AutoQuestions
+                    text={card4.text4}
+                    image={card4.image4}
+                    extraStyle="flex-row-reverse rounded-tl-[5px] ml-[20px]"
+                    pStyle="ml-[10px]"
+                  />
+
+                  <AutoQuestions
+                    text={card5.text5}
+                    image={card5.image5}
+                    extraStyle="flex-row-reverse rounded-tl-[5px] ml-[84px] mt-[62px] mb-[68px]"
+                    pStyle="ml-[10px]"
+                  />
+
+                  <AutoQuestions
+                    text={card6.text6}
+                    image={card6.image6}
+                    extraStyle="flex-row-reverse rounded-tl-[5px] ml-[20px]"
+                    pStyle="ml-[10px]"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {messages.map((message, index) => (
+                  <div
+                    key={index}
+                    className={`flex ${
+                      message.sender === "user"
+                        ? "justify-end"
+                        : "justify-start"
+                    }`}
+                  >
+                    <div
+                      className={`rounded-[30px] ${
+                        message.sender === "user"
+                          ? "bg-[#0A1C3B] text-white rounded-tr-[5px]"
+                          : "bg-[#0A1C3B] text-white rounded-tl-[5px]"
+                      } py-[12px] px-[20px] my-1 max-w-xs `}
+                    >
+                      {message.text}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="p-4">
+            <InputField onSendMessage={handleSendMessage} />
+          </div>
         </div>
       </div>
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    </div>
   );
 }
