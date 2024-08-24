@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8000/finalProject1.qa_chain/run";
+const BASE_URL =
+  "https://55f3-102-89-22-18.ngrok-free.app/finalProject1.qa_chain/run";
 // const BASE_URL = "https://cors-anywhere.herokuapp.com/http://localhost:8000/finalProject1.qa_chain/run";
 
 export const Quilliri = async (userData: any) => {
