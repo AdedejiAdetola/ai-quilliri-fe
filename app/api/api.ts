@@ -9,7 +9,7 @@ export const Quilliri = async (userData: any) => {
   console.log("got here", userData);
   try {
     const response = await axios.post(`${BASE_URL}`, userData, {
-      withCredentials: true, // Indicates whether or not cross-site Access-Control requests should be made using credentials
+      //   withCredentials: true, // Indicates whether or not cross-site Access-Control requests should be made using credentials
       // credentials: "include", // Passes cookies when making cross-origin requests
     });
     console.log(response);
