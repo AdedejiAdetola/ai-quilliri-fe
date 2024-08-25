@@ -61,6 +61,7 @@ export default function Home() {
       const questionR = {
         context: "",
         question: message,
+        conversation_history: "",
       };
       try {
         const response = await Quilliri(questionR);
